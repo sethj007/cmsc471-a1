@@ -62,9 +62,12 @@ function init() {
     .then(data => {
         console.log(data); // debug
         allData = data.filter(d => d.week <= 20);
+        
+        const snwdValues = allData.map(d => d.snwd).sort(d3.ascending);
+        const p95 = snwdValues[Math.floor(snwdValues.length * 0.95)];
 
         colorScale = d3.scaleSequential()
-            .domain(d3.extent(allData, d => d.snwd))
+            .domain([0, p95])
             .interpolator(d3.interpolateBlues);
         
         svg.selectAll('.cell')
