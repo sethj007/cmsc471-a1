@@ -5,7 +5,7 @@ const height = 600 - margin.top - margin.bottom;
 
 // global vars.
 const statesOrder = ['ME','NH','VT','MA','RI','CT','NY','NJ','PA','DE','MD','VA','WV','NC','SC','GA','FL'];
-let xScale, yScale, sizeScale;
+let xScale, yScale, colorScale;
 let allData = [];
 
 // create SVG
@@ -16,6 +16,7 @@ const svg = d3.select('#vis')
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
 
+// setting axis scales (categorical)
 xScale = d3.scaleBand()
     .domain(d3.range(1, 21))
     .range([0, width])
@@ -24,7 +25,29 @@ xScale = d3.scaleBand()
 yScale = d3.scaleBand()
     .domain(statesOrder)
     .range([0, height])
-    .padding(0.05)
+    .padding(0.05);
+
+colorScale = d3.scaleSequential()
+    .domain(d3.extent(allData, d => d.snwd))
+    .interpolator(d3.interpolateBlues);
+
+// drawing the axis
+svg.append('g')
+    .attr('class', 'x-axis')
+    .attr('transform', `translate(0, ${height})`)
+    .call(d3.axisBottom(xScale));
+
+svg.append('g')
+    .attr('class', 'y-axis')
+    .call(d3.axisLeft(yScale));
+
+// labeling chart and axis
+svg.append('text')
+    .attr('x', width/2)
+    .attr('y', -40)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('Snow Depth by State and Week (2017)');
 
 
 // load csv and transform data
