@@ -60,8 +60,23 @@ function init() {
         snwf: +d.SNOW
     }))
     .then(data => {
-        console.log(data)
-        allData = data.filter(d => d.week <= 20)
+        console.log(data); // debug
+        allData = data.filter(d => d.week <= 20);
+
+        colorScale = d3.scaleSequential()
+            .domain(d3.extent(allData, d => d.snwd))
+            .interpolator(d3.interpolateBlues);
+        
+        svg.selectAll('.cell')
+            .data(allData)
+            .enter()
+            .append('rect')
+            .attr('class', 'cell')
+            .attr('x', d => xScale(d.week))
+            .attr('y', d => yScale(d.state))
+            .attr('width', xScale.bandwidth())
+            .attr('height', yScale.bandwidth())
+            .attr('fill', d => colorScale(d.snwd));
     })
     .catch(error => console.error('Error loading data:', error))
 }
