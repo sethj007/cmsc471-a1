@@ -3,8 +3,10 @@ const margin = { top: 80, right: 60, bottom: 60, left: 100 };
 const width = 800 - margin.left - margin.right;
 const height = 600 - margin.top - margin.bottom;
 
-// global vars. 
-let allData;
+// global vars.
+const statesOrder = ['ME','NH','VT','MA','RI','CT','NY','NJ','PA','DE','MD','VA','WV','NC','SC','GA','FL'];
+let xScale, yScale, sizeScale;
+let allData = [];
 
 // create SVG
 const svg = d3.select('#vis')
@@ -13,6 +15,17 @@ const svg = d3.select('#vis')
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
+
+xScale = d3.scaleBand()
+    .domain(d3.range(1, 21))
+    .range([0, width])
+    .padding(0.05);
+
+yScale = d3.scaleBand()
+    .domain(statesOrder)
+    .range([0, height])
+    .padding(0.05)
+
 
 // load csv and transform data
 function init() {
@@ -25,9 +38,9 @@ function init() {
     }))
     .then(data => {
         console.log(data)
-        allData = data
+        allData = data.filter(d => d.week <= 20)
     })
     .catch(error => console.error('Error loading data:', error))
 }
 
-init();
+window.addEventListener('load', init);
