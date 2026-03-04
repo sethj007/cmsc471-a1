@@ -27,10 +27,6 @@ yScale = d3.scaleBand()
     .range([0, height])
     .padding(0.05);
 
-colorScale = d3.scaleSequential()
-    .domain(d3.extent(allData, d => d.snwd))
-    .interpolator(d3.interpolateBlues);
-
 // drawing the axis
 svg.append('g')
     .attr('class', 'x-axis')
@@ -49,6 +45,8 @@ svg.append('text')
     .attr('class', 'axis-label')
     .text('Snow Depth by State and Week (2017)');
 
+// tooltips
+const tooltip = d3.select('#tooltip');
 
 // load csv and transform data
 function init() {
@@ -79,7 +77,22 @@ function init() {
             .attr('y', d => yScale(d.state))
             .attr('width', xScale.bandwidth())
             .attr('height', yScale.bandwidth())
-            .attr('fill', d => colorScale(d.snwd));
+            .attr('fill', d => colorScale(d.snwd))
+            // tooltips -- mouse hovering & the works
+            .on('mouseover', function(event, d) {
+                tooltip.style('display', 'block')
+                    .html(`
+                        <strong>${d.state}</strong> — Week ${d.week}<br/>
+                        Snow Depth: ${d.snwd.toFixed(2)} in<br/>
+                        Avg. Temp: ${d.tavg.toFixed(1)} °F<br/>
+                        Snowfall: ${d.snwf.toFixed(2)} in
+                    `)
+                    .style('left', (event.pageX + 10) + 'px')
+                    .style('top', (event.pageY - 28) + 'px');
+            })
+            .on('mouseout', function() {
+                tooltip.style('display', 'none');
+            });
     })
     .catch(error => console.error('Error loading data:', error))
 }
