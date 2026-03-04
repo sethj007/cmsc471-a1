@@ -16,21 +16,18 @@ const svg = d3.select('#vis')
 
 // load csv and transform data
 function init() {
-    d3.csv("./data/east_coast_weather.csv",
-    function(d) {
-        return {
-            state: d.state,
-            week: +d.week,
-            snwd: +d.SNWD,
-            tavg: +d.TAVG,
-            snwf: +d.SNOW
-        }
-    })
+    d3.csv("./data/east_coast_weather.csv", d => ({
+        state: d.state,
+        week: +d.week,
+        snwd: +d.SNWD,
+        tavg: +d.TAVG,
+        snwf: +d.SNOW
+    }))
     .then(data => {
         console.log(data)
         allData = data
     })
-    .catch(error => console.error('Error loading data:', error));
+    .catch(error => console.error('Error loading data:', error))
 }
 
 init();
