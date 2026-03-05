@@ -1,25 +1,34 @@
 // set up dimens. and margins
 const margin = { top: 80, right: 60, bottom: 60, left: 100 };
-const width = 800 - margin.left - margin.right;
 const height = 600 - margin.top - margin.bottom;
+const heatmapWidth = 500 - margin.left - margin.right;
+const scatterWidth = 500 - margin.left - margin.right;
 
 // global vars.
 const statesOrder = ['ME','NH','VT','MA','RI','CT','NY','NJ','PA','DE','MD','VA','WV','NC','SC','GA','FL'];
-let xScale, yScale, colorScale;
+let xScale, yScale, xScatter, yScatter, colorScale;
 let allData = [];
 
-// create SVG
+// create heatmap SVG
 const svg = d3.select('#heatmap')
     .append('svg')
-    .attr('width', width + margin.left + margin.right)
+    .attr('width', heatmapWidth + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
     .append('g')
     .attr('transform', `translate(${margin.left},${margin.top})`);
 
-// setting axis scales (categorical)
+// create scatterplot SVG
+const svg2 = d3.select('#scplot')
+    .append('svg')
+    .attr('width', scatterWidth + margin.left + margin.right)
+    .attr('height', height + margin.top + margin.bottom)
+    .append('g')
+    .attr('transform', `translate(${margin.left},${margin.top})`);
+
+// setting axis scales
 xScale = d3.scaleBand()
     .domain(d3.range(1, 21))
-    .range([0, width])
+    .range([0, heatmapWidth])
     .padding(0.05);
 
 yScale = d3.scaleBand()
@@ -39,7 +48,14 @@ svg.append('g')
 
 // labeling chart and axis
 svg.append('text')
-    .attr('x', width/2)
+    .attr('x', heatmapWidth/2)
+    .attr('y', -40)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('East Coast Snow Depth by State and Week (2017)');
+
+svg2.append('text')
+    .attr('x', scatterWidth/2)
     .attr('y', -40)
     .attr('text-anchor', 'middle')
     .attr('class', 'axis-label')
@@ -47,7 +63,7 @@ svg.append('text')
 
 // brushing 
 const brush = d3.brushX()
-    .extent([[0, 0], [width, height]])
+    .extent([[0, 0], [heatmapWidth, height]])
     .on('brush end', brushed);
 
 // tooltips
@@ -68,10 +84,28 @@ function init() {
         
         const snwdValues = allData.map(d => d.snwd).sort(d3.ascending);
         const p95 = snwdValues[Math.floor(snwdValues.length * 0.95)];
-
+        
+        // setting scales that need data
         colorScale = d3.scaleSequential()
             .domain([0, p95])
             .interpolator(d3.interpolateBlues);
+
+        xScatter = d3.scaleLinear()
+            .domain(d3.extent(allData, d => d.tavg))
+            .range([0, scatterWidth]);
+
+        yScatter = d3.scaleLinear()
+            .domain(d3.extent(allData, d => d.snwd))
+            .range([height, 0]);
+
+        svg2.append('g')
+            .attr('class', 'x-axis')
+            .attr('transform', `translate(0, ${height})`)
+            .call(d3.axisBottom(xScatter));
+
+        svg2.append('g')
+            .attr('class', 'y-axis')
+            .call(d3.axisLeft(yScatter));
         
         svg.selectAll('.cell')
             .data(allData)
