@@ -9,7 +9,7 @@ let xScale, yScale, colorScale;
 let allData = [];
 
 // create SVG
-const svg = d3.select('#vis')
+const svg = d3.select('#heatmap')
     .append('svg')
     .attr('width', width + margin.left + margin.right)
     .attr('height', height + margin.top + margin.bottom)
