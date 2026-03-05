@@ -143,7 +143,19 @@ function init() {
         });
 
         const scatterData = stateAggregate(allData, 1, 5);
-        console.log(scatterData); // verify it looks right
+        console.log(scatterData); // verify it looks right -> it does
+
+        svg2.selectAll('.dot')
+            .data(scatterData)
+            .enter()
+            .append('circle')
+            .attr('class', 'dot')
+            .attr('cx', d => xScatter(d.tavg))
+            .attr('cy', d => yScatter(d.snwd))
+            .attr('r', 6)
+            .attr('fill', 'steelblue')
+            .attr('opacity', 0.75)
+        
     })
     .catch(error => console.error('Error loading data:', error))
 }
