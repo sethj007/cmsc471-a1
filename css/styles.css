@@ -51,3 +51,10 @@
     font-size: 12px;
 }
 
+.brush .selection {
+    fill: steelblue;
+    fill-opacity: 0.15;
+    stroke: steelblue;
+    stroke-width: 1px;
+}
+

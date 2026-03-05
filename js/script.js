@@ -43,7 +43,12 @@ svg.append('text')
     .attr('y', -40)
     .attr('text-anchor', 'middle')
     .attr('class', 'axis-label')
-    .text('Snow Depth by State and Week (2017)');
+    .text('East Coast Snow Depth by State and Week (2017)');
+
+// brushing 
+const brush = d3.brushX()
+    .extent([[0, 0], [width, height]])
+    .on('brush end', brushed);
 
 // tooltips
 const tooltip = d3.select('#tooltip');
@@ -93,8 +98,41 @@ function init() {
             .on('mouseout', function() {
                 tooltip.style('display', 'none');
             });
+        // drawing the brush
+        svg.append('g')
+            .attr('class', 'brush')
+            .call(brush);
+
+        svg.on('dblclick', function() {
+            svg.select('.brush').call(brush.move, null);
+            svg.selectAll('.cell').style('stroke', 'none').style('stroke-width', '0');
+        });
     })
     .catch(error => console.error('Error loading data:', error))
+}
+
+// more brushing
+function brushed(event) {
+    const selection = event.selection; // gives [x0, x1] in px
+
+    if (!selection) {
+        svg.selectAll('.cell').style('opacity', 1);
+        return;
+    }
+    
+    const [x0, x1] = selection;
+    
+    // convert pixels back to week numbers
+    const weeks = xScale.domain().filter(week => {
+        const pos = xScale(week);
+        return pos >= x0 && pos <= x1;
+    });
+
+    svg.selectAll('.cell')
+        .style('stroke', d => weeks.includes(d.week) ? 'black' : 'none')
+        .style('stroke-width', d => weeks.includes(d.week) ? '0.5px' : '0');
+    
+    console.log(weeks); // debug
 }
 
 window.addEventListener('load', init);
