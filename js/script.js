@@ -168,6 +168,15 @@ function init() {
             .text(d => d.state)
             .style('font-size', '11px')
             .style('fill', '#333');
+
+        d3.select('#stateFilter')
+            .selectAll('option.state-option')
+            .data(statesOrder)
+            .enter()
+            .append('option')
+            .attr('class', 'state-option')
+            .attr('value', d => d)
+            .text(d => d);
     })
     .catch(error => console.error('Error loading data:', error))
 }
