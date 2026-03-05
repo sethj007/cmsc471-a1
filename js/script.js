@@ -169,6 +169,7 @@ function init() {
             .style('font-size', '11px')
             .style('fill', '#333');
 
+        // filled state dropdown
         d3.select('#stateFilter')
             .selectAll('option.state-option')
             .data(statesOrder)
@@ -177,6 +178,22 @@ function init() {
             .attr('class', 'state-option')
             .attr('value', d => d)
             .text(d => d);
+
+        // event listener for when state is chosen from the dropdown
+        d3.select('#stateFilter').on('change', function() {
+            const selected = d3.select(this).property('value');
+    
+            if (selected === 'all') {
+                svg.selectAll('.cell').style('opacity', 1);
+                svg2.selectAll('.dot').attr('r', 6)
+            } else {
+                svg.selectAll('.cell')
+                    .style('opacity', d => d.state === selected ? 1 : 0.15);
+                svg2.selectAll('.dot')
+                    .attr('r', d => d.state === selected ? 12 : 6);
+            }
+        });
+
     })
     .catch(error => console.error('Error loading data:', error))
 }
