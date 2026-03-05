@@ -178,6 +178,7 @@ function brushed(event) {
 
     if (!selection) {
         svg.selectAll('.cell').style('opacity', 1);
+        updateScatter(1, 20);
         return;
     }
     
