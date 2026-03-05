@@ -59,7 +59,39 @@ svg2.append('text')
     .attr('y', -40)
     .attr('text-anchor', 'middle')
     .attr('class', 'axis-label')
-    .text('East Coast Snow Depth by State and Week (2017)');
+    .text('Avg. Temperature vs. Snow Depth - By State');
+
+// heatmap
+svg.append('text')
+    .attr('x', heatmapWidth / 2)
+    .attr('y', height + margin.bottom - 10)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('Week');
+
+svg.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -height / 2)
+    .attr('y', -margin.left + 20)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('State');
+
+// scatterplot
+svg2.append('text')
+    .attr('x', scatterWidth / 2)
+    .attr('y', height + margin.bottom - 10)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('Avg. Temperature (°F)');
+
+svg2.append('text')
+    .attr('transform', 'rotate(-90)')
+    .attr('x', -height / 2)
+    .attr('y', -margin.left + 20)
+    .attr('text-anchor', 'middle')
+    .attr('class', 'axis-label')
+    .text('Snow Depth (in)');
 
 // brushing 
 const brush = d3.brushX()
@@ -146,28 +178,7 @@ function init() {
         console.log(scatterData); // verify it looks right -> it does
         
         // drawing scatterplot dots
-        svg2.selectAll('.dot')
-            .data(scatterData)
-            .enter()
-            .append('circle')
-            .attr('class', 'dot')
-            .attr('cx', d => xScatter(d.tavg))
-            .attr('cy', d => yScatter(d.snwd))
-            .attr('r', 6)
-            .attr('fill', 'steelblue')
-            .attr('opacity', 0.75);
-        
-        // state labels for each dot so people know what the dots are LOL
-        svg2.selectAll('.dot-label')
-            .data(scatterData)
-            .enter()
-            .append('text')
-            .attr('class', 'dot-label')
-            .attr('x', d => xScatter(d.tavg) + 8)  // offset from dot
-            .attr('y', d => yScatter(d.snwd) + 4)  // center that shii
-            .text(d => d.state)
-            .style('font-size', '11px')
-            .style('fill', '#333');
+        updateScatter(1, 20);
 
         // filled state dropdown
         d3.select('#stateFilter')
@@ -243,6 +254,7 @@ function stateAggregate(data, weekMin, weekMax) {
 // updating scatterplot when brush selection changes
 function updateScatter(weekMin, weekMax) {
     const scatterData = stateAggregate(allData, weekMin, weekMax);
+    const selected = d3.select('#stateFilter').property('value');
     
     svg2.selectAll('.dot')
         .data(scatterData, d => d.state) // binds data to existing dots by state name
@@ -250,7 +262,7 @@ function updateScatter(weekMin, weekMax) {
         .attr('class', 'dot')
         .attr('cx', d => xScatter(d.tavg))
         .attr('cy', d => yScatter(d.snwd))
-        .attr('r', 6)
+        .attr('r', d => d.state === selected ? 12 : 6)
         .attr('fill', 'steelblue')
         .attr('opacity', 0.75);
 
