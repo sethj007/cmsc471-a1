@@ -1,8 +1,8 @@
 // set up dimens. and margins
 const margin = { top: 80, right: 60, bottom: 60, left: 100 };
 const height = 600 - margin.top - margin.bottom;
-const heatmapWidth = 500 - margin.left - margin.right;
-const scatterWidth = 500 - margin.left - margin.right;
+const heatmapWidth = 750 - margin.left - margin.right;
+const scatterWidth = 750 - margin.left - margin.right;
 
 // global vars.
 const statesOrder = ['ME','NH','VT','MA','RI','CT','NY','NJ','PA','DE','MD','VA','WV','NC','SC','GA','FL'];
@@ -141,6 +141,9 @@ function init() {
             svg.select('.brush').call(brush.move, null);
             svg.selectAll('.cell').style('stroke', 'none').style('stroke-width', '0');
         });
+
+        const scatterData = stateAggregate(allData, 1, 5);
+        console.log(scatterData); // verify it looks right
     })
     .catch(error => console.error('Error loading data:', error))
 }
@@ -167,6 +170,21 @@ function brushed(event) {
         .style('stroke-width', d => weeks.includes(d.week) ? '0.5px' : '0');
     
     console.log(weeks); // debug
+}
+
+// scatterplot data aggregation
+
+// ex. arr structure thats returned: [{state: 'ME', tavg: 25.3, snwd: 12.1 ... }]
+function stateAggregate(data, weekMin, weekMax) {
+    const filtered = data.filter(d => d.week >= weekMin && d.week <= weekMax);
+    const rolled = d3.rollup(filtered, v => ({
+        tavg: d3.mean(v, d => d.tavg),
+        snwd: d3.mean(v, d => d.snwd)
+        }),
+        d => d.state
+    );
+
+    return Array.from(rolled, ([state, values]) => ({ state, ...values }));
 }
 
 window.addEventListener('load', init);
