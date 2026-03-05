@@ -189,6 +189,9 @@ function brushed(event) {
         return pos >= x0 && pos <= x1;
     });
 
+    // updating the scatterpot when brushed
+    updateScatter(d3.min(weeks), d3.max(weeks));
+
     svg.selectAll('.cell')
         .style('stroke', d => weeks.includes(d.week) ? 'black' : 'none')
         .style('stroke-width', d => weeks.includes(d.week) ? '0.5px' : '0');
@@ -197,7 +200,6 @@ function brushed(event) {
 }
 
 // scatterplot data aggregation
-
 // ex. arr structure thats returned: [{state: 'ME', tavg: 25.3, snwd: 12.1 ... }]
 function stateAggregate(data, weekMin, weekMax) {
     const filtered = data.filter(d => d.week >= weekMin && d.week <= weekMax);
@@ -209,6 +211,31 @@ function stateAggregate(data, weekMin, weekMax) {
     );
 
     return Array.from(rolled, ([state, values]) => ({ state, ...values }));
+}
+
+// updating scatterplot when brush selection changes
+function updateScatter(weekMin, weekMax) {
+    const scatterData = stateAggregate(allData, weekMin, weekMax);
+    
+    svg2.selectAll('.dot')
+        .data(scatterData, d => d.state) // binds data to existing dots by state name
+        .join('circle') // enter, update, exit for new dots
+        .attr('class', 'dot')
+        .attr('cx', d => xScatter(d.tavg))
+        .attr('cy', d => yScatter(d.snwd))
+        .attr('r', 6)
+        .attr('fill', 'steelblue')
+        .attr('opacity', 0.75);
+
+    svg2.selectAll('.dot-label')
+        .data(scatterData, d => d.state)
+        .join('text')
+        .attr('class', 'dot-label')
+        .attr('x', d => xScatter(d.tavg) + 8)
+        .attr('y', d => yScatter(d.snwd) + 4)
+        .text(d => d.state)
+        .style('font-size', '11px')
+        .style('fill', '#333');
 }
 
 window.addEventListener('load', init);
