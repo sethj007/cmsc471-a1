@@ -144,7 +144,8 @@ function init() {
 
         const scatterData = stateAggregate(allData, 1, 5);
         console.log(scatterData); // verify it looks right -> it does
-
+        
+        // drawing scatterplot dots
         svg2.selectAll('.dot')
             .data(scatterData)
             .enter()
@@ -154,8 +155,19 @@ function init() {
             .attr('cy', d => yScatter(d.snwd))
             .attr('r', 6)
             .attr('fill', 'steelblue')
-            .attr('opacity', 0.75)
+            .attr('opacity', 0.75);
         
+        // state labels for each dot so people know what the dots are LOL
+        svg2.selectAll('.dot-label')
+            .data(scatterData)
+            .enter()
+            .append('text')
+            .attr('class', 'dot-label')
+            .attr('x', d => xScatter(d.tavg) + 8)  // offset from dot
+            .attr('y', d => yScatter(d.snwd) + 4)  // center that shii
+            .text(d => d.state)
+            .style('font-size', '11px')
+            .style('fill', '#333');
     })
     .catch(error => console.error('Error loading data:', error))
 }
