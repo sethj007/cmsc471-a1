@@ -173,8 +173,21 @@ function init() {
                 .call(brush);
 
             svg.on('dblclick', function () {
+                const selectedState = d3.select('#stateFilter').property('value');
                 svg.select('.brush').call(brush.move, null);
-                svg.selectAll('.cell').style('stroke', 'none').style('stroke-width', '0');
+    
+                if (selectedState === 'all') {
+                    svg.selectAll('.cell').style('stroke', 'none').style('stroke-width', '0');
+                } else {
+                    svg.selectAll('.cell')
+                    .style('stroke', 'none')
+                        .style('stroke-width', '0')
+                        .style('opacity', d => d.state === selectedState ? 1 : 0.05);
+                    svg.selectAll('.cell')
+                        .filter(d => d.state === selectedState)
+                        .style('stroke', '#f0a500')
+                        .style('stroke-width', '0.75px');
+                }
             });
 
             // please let me see tooltips again...
@@ -229,16 +242,31 @@ function init() {
                 const selected = d3.select(this).property('value');
 
                 if (selected === 'all') {
-                    svg.selectAll('.cell').style('opacity', 1);
-                    svg2.selectAll('.dot').attr('r', 6)
+                    svg.selectAll('.cell')
+                        .style('opacity', 1)
+                        .style('stroke', 'none')
+                        .style('stroke-width', '0');
+                    svg2.selectAll('.dot')
+                        .transition()
+                        .duration(t)
+                        .ease(d3.easeCubicOut)
+                        .attr('r', 8);
                 } else {
                     svg.selectAll('.cell')
-                        .style('opacity', d => d.state === selected ? 1 : 0.15);
+                        .style('stroke', 'none')
+                        .style('stroke-width', '0')
+                        .style('opacity', d => d.state === selected ? 1 : 0.05);
+                    svg.selectAll('.cell')
+                        .filter(d => d.state === selected)
+                        .style('stroke', '#f0a500')
+                        .style('stroke-width', '0.75px');
                     svg2.selectAll('.dot')
+                        .transition()
+                        .duration(t)
+                        .ease(d3.easeCubicOut)
                         .attr('r', d => d.state === selected ? 24 : 8);
                 }
             });
-
         })
         .catch(error => console.error('Error loading data:', error))
 }
@@ -246,16 +274,26 @@ function init() {
 // more brushing
 function brushed(event) {
     const selection = event.selection; // gives [x0, x1] in px
+    const selectedState = d3.select('#stateFilter').property('value');
 
     if (!selection) {
-        svg.selectAll('.cell').style('opacity', 1).style('stroke', 'none').style('stroke-width', '0');
+        const selectedState = d3.select('#stateFilter').property('value');
+        if (selectedState === 'all') {
+            svg.selectAll('.cell').style('opacity', 1).style('stroke', 'none').style('stroke-width', '0');
+        } else {
+            svg.selectAll('.cell')
+                .style('stroke', 'none').style('stroke-width', '0')
+                .style('opacity', d => d.state === selectedState ? 1 : 0.05);
+            svg.selectAll('.cell')
+                .filter(d => d.state === selectedState)
+                .style('stroke', '#f0a500').style('stroke-width', '0.75px');
+        }
         updateScatter(1, 20);
         return;
     }
 
-    const [x0, x1] = selection;
-
     // convert pixels back to week numbers
+    const [x0, x1] = selection;
     const weeks = xScale.domain().filter(week => {
         const pos = xScale(week);
         return pos >= x0 && pos <= x1;
@@ -265,8 +303,20 @@ function brushed(event) {
     updateScatter(d3.min(weeks), d3.max(weeks));
 
     svg.selectAll('.cell')
-        .style('stroke', d => weeks.includes(d.week) ? 'black' : 'none')
-        .style('stroke-width', d => weeks.includes(d.week) ? '0.5px' : '0');
+        .style('stroke', d => {
+            if (d.state === selectedState && selectedState !== 'all') return '#f0a500';
+            if (weeks.includes(d.week)) return '#1a1a2e';
+            return 'none';
+        })
+        .style('stroke-width', d => {
+            if (d.state === selectedState && selectedState !== 'all') return '0.75px';
+            if (weeks.includes(d.week)) return '0.5px';
+            return '0';
+        })
+        .style('opacity', d => {
+            if (selectedState === 'all') return 1;
+            return d.state === selectedState ? 1 : 0.05;
+        });
 
     console.log(weeks); // debug
 }
