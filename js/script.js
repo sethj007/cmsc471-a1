@@ -288,6 +288,9 @@ function stateAggregate(data, weekMin, weekMax) {
 function updateScatter(weekMin, weekMax) {
     const scatterData = stateAggregate(allData, weekMin, weekMax);
     const selected = d3.select('#stateFilter').property('value');
+    const tempColorScale = d3.scaleSequential()
+        .domain(d3.extent(scatterData, d => d.tavg).reverse())
+        .interpolator(d3.interpolateRdYlBu); // warm to cold (red to blue)
 
     svg2.selectAll('.dot')
         .data(scatterData, d => d.state) // binds data to existing dots by state name
@@ -295,8 +298,9 @@ function updateScatter(weekMin, weekMax) {
         .attr('class', 'dot')
         .attr('cx', d => xScatter(d.tavg))
         .attr('cy', d => yScatter(d.snwd))
-        .attr('r', d => d.state === selected ? 12 : 6)
-        .attr('fill', d => d.state === 'MA' ? '#e05c2a' : 'steelblue')
+        .attr('r', d => d.state === selected ? 40 : 8)
+        // .attr('fill', d => d.state === 'MA' ? '#e05c2a' : 'steelblue')
+        .attr('fill', d => tempColorScale(d.tavg))
         .attr('opacity', 0.75);
 
     svg2.selectAll('.dot-label')
