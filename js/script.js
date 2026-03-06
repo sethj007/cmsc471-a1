@@ -8,6 +8,7 @@ const scatterWidth = 750 - margin.left - margin.right;
 const statesOrder = ['ME', 'NH', 'VT', 'MA', 'RI', 'CT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'VA', 'WV', 'NC', 'SC', 'GA', 'FL'];
 let xScale, yScale, xScatter, yScatter, colorScale;
 let allData = [];
+const t = 400; // ms delay for transitions
 
 // create heatmap SVG
 const svg = d3.select('#heatmap')
@@ -296,12 +297,6 @@ function updateScatter(weekMin, weekMax) {
         .data(scatterData, d => d.state) // binds data to existing dots by state name
         .join('circle') // enter, update, exit for new dots
         .attr('class', 'dot')
-        .attr('cx', d => xScatter(d.tavg))
-        .attr('cy', d => yScatter(d.snwd))
-        .attr('r', d => d.state === selected ? 24 : 8)
-        // .attr('fill', d => d.state === 'MA' ? '#e05c2a' : 'steelblue')
-        .attr('fill', d => tempColorScale(d.tavg))
-        .attr('opacity', 0.75)
         .on('mouseover', function(event, d) {
             tooltip.style('display', 'block')
             .html(`
@@ -314,12 +309,23 @@ function updateScatter(weekMin, weekMax) {
         })
         .on('mouseout', function() {
             tooltip.style('display', 'none');
-        });
+        })
+        .transition()
+        .duration(t)
+        .ease(d3.easeCubicOut)
+        .attr('cx', d => xScatter(d.tavg))
+        .attr('cy', d => yScatter(d.snwd))
+        .attr('r', d => d.state === selected ? 24 : 8)
+        .attr('fill', d => tempColorScale(d.tavg))
+        .attr('opacity', 0.75)
 
     svg2.selectAll('.dot-label')
         .data(scatterData, d => d.state)
         .join('text')
         .attr('class', 'dot-label')
+        .transition()
+        .duration(t)
+        .ease(d3.easeCubicOut)
         .attr('x', d => xScatter(d.tavg) + 8)
         .attr('y', d => yScatter(d.snwd) + 4)
         .text(d => d.state)
