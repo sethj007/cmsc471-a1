@@ -6,9 +6,9 @@ const scatterWidth = 750 - margin.left - margin.right;
 
 // global vars.
 const statesOrder = ['ME', 'NH', 'VT', 'MA', 'RI', 'CT', 'NY', 'NJ', 'PA', 'DE', 'MD', 'VA', 'WV', 'NC', 'SC', 'GA', 'FL'];
+const t = 400; // ms delay for transitions
 let xScale, yScale, xScatter, yScatter, colorScale;
 let allData = [];
-const t = 400; // ms delay for transitions
 
 // create heatmap SVG
 const svg = d3.select('#heatmap')
@@ -293,6 +293,28 @@ function updateScatter(weekMin, weekMax) {
         .domain(d3.extent(scatterData, d => d.tavg).reverse())
         .interpolator(d3.interpolateRdYlBu); // warm to cold (red to blue)
 
+    // freezing point line for visualization aid
+    svg2.selectAll('.freeze-line').remove();
+    svg2.append('line')
+        .attr('class', 'freeze-line')
+        .attr('x1', xScatter(32))
+        .attr('x2', xScatter(32))
+        .attr('y1', 0)
+        .attr('y2', height)
+        .style('stroke', '#5b9bd5')
+        .style('stroke-width', '1.5px')
+        .style('stroke-dasharray', '6,4')
+        .style('opacity', 0.7);
+
+    svg2.selectAll('.freeze-label').remove();
+    svg2.append('text')
+        .attr('class', 'freeze-label')
+        .attr('x', xScatter(32) + 5)
+        .attr('y', 14)
+        .style('font-size', '10px')
+        .style('fill', '#5b9bd5')
+        .text('32°F — freezing');
+    
     svg2.selectAll('.dot')
         .data(scatterData, d => d.state) // binds data to existing dots by state name
         .join('circle') // enter, update, exit for new dots
