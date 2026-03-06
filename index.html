@@ -3,19 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>cmsc471-A1</title>
+    <title>East Coast Snow (2017)</title>
     <link rel="stylesheet" href="css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+</head>
 <body>
-    <div class="container"> <!-- centers content and sets max width -->
-        <h1>CMSC471: A1 Interactive Visualization (weather)</h1>
-        <div id="controls">
-            <label for="stateFilter">Filter by State:</label>
-            <select id="stateFilter">
-            <option value="all">All States</option>
-            <!-- states will go here -->
-
-            </select>
+    <div class="page-wrapper">
+        <header>
+            <div class="header-inner">
+                <p class="overline">CMSC434 · Data Visualization · 2017 NOAA Data</p>
+                <h1>Where Did the Snow Actually <em>Stick?</em></h1>
+                <p class="subtitle">Snowfall and snow depth tell different stories. Explore which East Coast states saw persistent accumulation in 2017 — and what role temperature played!</p>
+            </div>
+        </header>
+        <div class="controls-bar">
+            <div class="control-group">
+                <label for="stateFilter">Highlight state</label>
+                <select id="stateFilter">
+                    <option value="all">All States</option>
+                </select>
+            </div>
+            <div class="instructions">
+                <span class="instruction-item"> <strong>Drag</strong> on the heatmap to filter by week range</span>
+                <span class="instruction-item"> <strong>Double-click</strong> to reset</span>
+                <span class="instruction-item"> <strong>Hover</strong> cells for details</span>
+            </div>
         </div>
         <!-- container for two svgs -->
         <div id="vis-container">
