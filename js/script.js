@@ -47,18 +47,20 @@ svg.append('g')
     .call(d3.axisLeft(yScale));
 
 // labeling chart and axis
+
+// titles
 svg.append('text')
     .attr('x', heatmapWidth/2)
     .attr('y', -40)
     .attr('text-anchor', 'middle')
-    .attr('class', 'axis-label')
+    .attr('class', 'chart-title')
     .text('East Coast Snow Depth by State and Week (2017)');
 
 svg2.append('text')
     .attr('x', scatterWidth/2)
     .attr('y', -40)
     .attr('text-anchor', 'middle')
-    .attr('class', 'axis-label')
+    .attr('class', 'chart-title')
     .text('Avg. Temperature vs. Snow Depth - By State');
 
 // heatmap
@@ -214,7 +216,7 @@ function brushed(event) {
     const selection = event.selection; // gives [x0, x1] in px
 
     if (!selection) {
-        svg.selectAll('.cell').style('opacity', 1);
+        svg.selectAll('.cell').style('opacity', 1).style('stroke', 'none').style('stroke-width', '0');
         updateScatter(1, 20);
         return;
     }
@@ -263,7 +265,7 @@ function updateScatter(weekMin, weekMax) {
         .attr('cx', d => xScatter(d.tavg))
         .attr('cy', d => yScatter(d.snwd))
         .attr('r', d => d.state === selected ? 12 : 6)
-        .attr('fill', 'steelblue')
+        .attr('fill', d => d.state === 'MA' ? '#e05c2a' : 'steelblue')
         .attr('opacity', 0.75);
 
     svg2.selectAll('.dot-label')
