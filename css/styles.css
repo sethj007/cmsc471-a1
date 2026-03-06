@@ -1,26 +1,42 @@
-/* Reset default styles */
-* {
-    font-family: Arial, sans-serif;
-    margin: 0px auto;
-    line-height: 1.8;
+/* Reset default styles */ 
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f7f8fa;
+    font-family: 'DM Sans', Arial, sans-serif;
+    color: #1a1a2e;
+    line-height: 1.6;
 }
 
 /* Container styling for layout */
-.container {
-    max-width: 1400px;
-    margin: 2rem auto;
-    font-family: Arial, sans-serif;
+/* changed to page-wrapper, using my own container */
+.page-wrapper {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem 4rem;
 }
 
 #vis-container {
     display: flex;
+    gap: 1.5rem;
     justify-content: center;
-    gap: 20px;
+    align-items: flex-start;
 }
 
 #heatmap svg, #scplot svg {
-    margin: 2rem 0;
-    border: 1px solid #ccc;
+    margin: 0;
+}
+
+.chart-card {
+    background: #ffffff;
+    border: 1px solid #e2e6ea;
+    border-radius: 10px;
+    padding: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
 }
 
 .y-axis .tick line {
@@ -31,29 +47,35 @@
 .y-axis path,
 .x-axis line,
 .y-axis line {
-    stroke: #333;
+    stroke: #d0d5dd;
     shape-rendering: crispEdges;
 }
 
 .x-axis text,
 .y-axis text {
-    font-size: 12px;
-    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-family: 'DM Sans', Arial, sans-serif;
+    fill: #555e6e;
 }
 
 .axis-label {
-    font-size: 14px;
-    font-weight: bold;
+    font-size: 12px;
+    font-weight: 600;
+    font-family: 'DM Sans', Arial, sans-serif;
+    fill: #555e6e;
 }
 
 #tooltip {
     position: absolute;
-    padding: 10px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 10px 13px;
+    background: #ffffff;
+    border: 1px solid #e2e6ea;
+    border-radius: 7px;
     pointer-events: none;
     font-size: 12px;
+    font-family: 'DM Sans', Arial, sans-serif;
+    line-height: 1.7;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
 }
 
 .brush .selection {
@@ -61,4 +83,88 @@
     fill-opacity: 0.15;
     stroke: steelblue;
     stroke-width: 1px;
+}
+
+select {
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 0.88rem;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid #e2e6ea;
+    border-radius: 5px;
+    background: #f7f8fa;
+    color: #1a1a2e;
+    cursor: pointer;
+}
+
+/* header styles */
+header {
+    padding: 2.5rem 0 1.5rem;
+    border-bottom: 1px solid #e2e6ea;
+    margin-bottom: 1.5rem;
+}
+
+.overline {
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #2171b5;
+    margin-bottom: 0.5rem;
+}
+
+h1 {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.4rem;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    font-weight: 400;
+}
+
+h1 em {
+    color: #08306b;
+    font-style: italic;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: #555e6e;
+    max-width: 640px;
+}
+
+/* control bar styles... */
+.controls-bar {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.75rem 1.25rem;
+    background: #ffffff;
+    border: 1px solid #e2e6ea;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.control-group label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #555e6e;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.instructions {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.instruction-item {
+    font-size: 0.8rem;
+    color: #555e6e;
 }
