@@ -234,7 +234,7 @@ function init() {
                     svg.selectAll('.cell')
                         .style('opacity', d => d.state === selected ? 1 : 0.15);
                     svg2.selectAll('.dot')
-                        .attr('r', d => d.state === selected ? 12 : 6);
+                        .attr('r', d => d.state === selected ? 24 : 8);
                 }
             });
 
@@ -298,10 +298,23 @@ function updateScatter(weekMin, weekMax) {
         .attr('class', 'dot')
         .attr('cx', d => xScatter(d.tavg))
         .attr('cy', d => yScatter(d.snwd))
-        .attr('r', d => d.state === selected ? 40 : 8)
+        .attr('r', d => d.state === selected ? 24 : 8)
         // .attr('fill', d => d.state === 'MA' ? '#e05c2a' : 'steelblue')
         .attr('fill', d => tempColorScale(d.tavg))
-        .attr('opacity', 0.75);
+        .attr('opacity', 0.75)
+        .on('mouseover', function(event, d) {
+            tooltip.style('display', 'block')
+            .html(`
+                <strong>${d.state}</strong><br/>
+                Avg. Temp: ${d.tavg.toFixed(1)} °F<br/>
+                Snow Depth: ${d.snwd.toFixed(2)} in
+            `)
+        .style('left', (event.pageX + 10) + 'px')
+        .style('top', (event.pageY - 28) + 'px');
+        })
+        .on('mouseout', function() {
+            tooltip.style('display', 'none');
+        });
 
     svg2.selectAll('.dot-label')
         .data(scatterData, d => d.state)
