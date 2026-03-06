@@ -243,6 +243,10 @@ function init() {
 
                 if (selected === 'all') {
                     svg.selectAll('.cell')
+                        .interrupt()
+                        .transition()
+                        .duration(t)
+                        .ease(d3.easeCubicOut)
                         .style('opacity', 1)
                         .style('stroke', 'none')
                         .style('stroke-width', '0');
@@ -253,14 +257,15 @@ function init() {
                         .attr('r', 8);
                 } else {
                     svg.selectAll('.cell')
-                        .style('stroke', 'none')
-                        .style('stroke-width', '0')
-                        .style('opacity', d => d.state === selected ? 1 : 0.05);
-                    svg.selectAll('.cell')
-                        .filter(d => d.state === selected)
-                        .style('stroke', '#f0a500')
-                        .style('stroke-width', '0.75px');
+                        .interrupt()
+                        .transition()
+                        .duration(t)
+                        .ease(d3.easeCubicOut)
+                        .style('opacity', d => d.state === selected ? 1 : 0.05)
+                        .style('stroke', d => d.state === selected ? '#f0a500' : 'none')
+                        .style('stroke-width', d => d.state === selected ? '0.75px' : '0');
                     svg2.selectAll('.dot')
+                        .interrupt()
                         .transition()
                         .duration(t)
                         .ease(d3.easeCubicOut)
