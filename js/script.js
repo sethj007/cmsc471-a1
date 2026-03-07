@@ -132,6 +132,44 @@ function init() {
             yScatter = d3.scaleLinear()
                 .domain(d3.extent(allData, d => d.snwd))
                 .range([height, 0]);
+            // heatmap legend
+            const legendWidth = 150, legendHeight = 12;
+
+            const legendSvg = svg.append('g')
+                .attr('class', 'heatmap-legend')
+                .attr('transform', `translate(${heatmapWidth - legendWidth}, ${height + margin.bottom - 27})`);
+
+            const defs = svg.append('defs');
+            const linearGradient = defs.append('linearGradient')
+                .attr('id', 'snow-gradient');
+
+            linearGradient.selectAll('stop')
+                .data(d3.range(0, 1.01, 0.1))
+                .enter().append('stop')
+                .attr('offset', d => `${d * 100}%`)
+                .attr('stop-color', d => colorScale(d * p95));
+
+            legendSvg.append('rect')
+                .attr('width', legendWidth)
+                .attr('height', legendHeight)
+                .style('fill', 'url(#snow-gradient)');
+
+            const legendScale = d3.scaleLinear()
+                .domain([0, p95])
+                .range([0, legendWidth]);
+
+            legendSvg.append('g')
+                .attr('transform', `translate(0, ${legendHeight})`)
+                .call(d3.axisBottom(legendScale).ticks(5).tickSize(4))
+                .select('.domain').remove();
+
+            legendSvg.append('text')
+                .attr('x', legendWidth / 2)
+                .attr('y', -5)
+                .attr('text-anchor', 'middle')
+                .style('font-size', '10px')
+                .style('fill', '#333')
+                .text('Snow Depth (in)');
 
             svg2.append('g')
                 .attr('class', 'x-axis')
@@ -152,6 +190,8 @@ function init() {
                 .attr('width', xScale.bandwidth())
                 .attr('height', yScale.bandwidth())
                 .attr('fill', d => colorScale(d.snwd))
+
+            
                 // tooltips -- mouse hovering & the works
                 .on('mouseover', function (event, d) {
                     tooltip.style('display', 'block')
@@ -300,8 +340,9 @@ function brushed(event) {
     // convert pixels back to week numbers
     const [x0, x1] = selection;
     const weeks = xScale.domain().filter(week => {
-        const pos = xScale(week);
-        return pos >= x0 && pos <= x1;
+        const barStart = xScale(week);
+        const barEnd = barStart + xScale.bandwidth();
+        return barStart <= x1 && barEnd >= x0;
     });
 
     // updating the scatterpot when brushed
@@ -347,6 +388,8 @@ function updateScatter(weekMin, weekMax) {
     const tempColorScale = d3.scaleSequential()
         .domain(d3.extent(scatterData, d => d.tavg).reverse())
         .interpolator(d3.interpolateRdYlBu); // warm to cold (red to blue)
+    
+    if (!scatterData || scatterData.length === 0) return;
 
     // freezing point line for visualization aid
     svg2.selectAll('.freeze-line').remove();
@@ -370,6 +413,59 @@ function updateScatter(weekMin, weekMax) {
         .style('fill', '#5b9bd5')
         .text('32°F — freezing');
     
+    // scatterplot color legend
+    if (scatterData.length > 0) {
+    svg2.selectAll('.scatter-legend').remove();
+    const sLegendWidth = 150, sLegendHeight = 12;
+    const [tMin, tMax] = d3.extent(scatterData, d => d.tavg);
+
+    const sLegend = svg2.append('g')
+        .attr('class', 'scatter-legend')
+        .attr('transform', `translate(${scatterWidth - sLegendWidth}, ${height + margin.bottom - 27})`);
+    const sGradientId = 'temp-gradient';
+    let sDefs = svg2.select('defs');
+    if (sDefs.empty()) sDefs = svg2.append('defs');
+
+    sDefs.selectAll(`#${sGradientId}`).remove();
+    const sGradient = sDefs.append('linearGradient')
+        .attr('id', sGradientId);
+
+    sGradient.selectAll('stop')
+        .data(d3.range(0, 1.01, 0.1))
+        .enter().append('stop')
+        .attr('offset', d => `${d * 100}%`)
+        .attr('stop-color', d => tempColorScale(
+        d3.extent(scatterData, s => s.tavg)[0] + 
+        d * (d3.extent(scatterData, s => s.tavg)[1] - d3.extent(scatterData, s => s.tavg)[0])
+    ));
+
+
+    sLegend.append('rect')
+        .attr('width', sLegendWidth)
+        .attr('height', sLegendHeight)
+        .style('fill', `url(#${sGradientId})`);
+
+    const sLegendScale = d3.scaleLinear()
+        .domain([tMin, tMax])  
+        .range([0, sLegendWidth]);
+    const [coldState, , , warmState] = [
+        scatterData.reduce((a, b) => a.tavg < b.tavg ? a : b).state,
+        null, null,
+        scatterData.reduce((a, b) => a.tavg > b.tavg ? a : b).state
+    ];
+    sLegend.append('g')
+        .attr('transform', `translate(0, ${sLegendHeight})`)
+        .call(d3.axisBottom(sLegendScale).tickValues([tMin, tMax]).tickSize(4).tickFormat(d => 
+    d === tMin ? coldState : warmState))
+
+    sLegend.append('text')
+        .attr('x', sLegendWidth / 2)
+        .attr('y', -5)
+        .attr('text-anchor', 'middle')
+        .style('font-size', '10px')
+        .style('fill', '#333')
+        .text('Coldest State → Warmest State');
+    }
     svg2.selectAll('.dot')
         .data(scatterData, d => d.state) // binds data to existing dots by state name
         .join('circle') // enter, update, exit for new dots

@@ -6,7 +6,11 @@
 }
 
 body {
-    background: #f7f8fa;
+    background-image: url("../images/Background.png");
+    background-size: cover;      
+    background-repeat: no-repeat; 
+    background-position: center;
+    backdrop-filter: blur(3px);
     font-family: 'DM Sans', Arial, sans-serif;
     color: #1a1a2e;
     line-height: 1.6;
@@ -137,7 +141,7 @@ h1 em {
     align-items: center;
     gap: 2rem;
     padding: 0.75rem 1.25rem;
-    background: #ffffff;
+    background-color: rgba(255, 255, 255, 0.7);
     border: 1px solid #e2e6ea;
     border-radius: 8px;
     margin-bottom: 1.5rem;
@@ -167,4 +171,18 @@ h1 em {
 .instruction-item {
     font-size: 0.8rem;
     color: #555e6e;
+}
+
+.text-area {
+    align-items: center;
+    gap: 2rem;
+    padding: 0.75rem 1.25rem;
+    background: #ffffff;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    background-color: rgba(255, 255, 255, 0.7);
+}
+ul,ol{
+    padding-left: 2rem;
+    margin-bottom: 1rem;
 }

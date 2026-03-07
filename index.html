@@ -11,7 +11,7 @@
     <div class="page-wrapper">
         <header>
             <div class="header-inner">
-                <p class="overline">CMSC434 · Data Visualization · 2017 NOAA Data</p>
+                <p class="overline">CMSC471 · Data Visualization · 2017 NOAA Data</p>
                 <h1>Where Did the Snow Actually <em>Stick?</em></h1>
                 <p class="subtitle">Snowfall and snow depth tell different stories. Explore which East Coast states saw persistent accumulation in 2017 — and what role temperature played!</p>
             </div>
@@ -33,6 +33,45 @@
         <div id="vis-container">
             <div class="chart-card"><div id="heatmap"></div></div>
             <div class="chart-card"><div id="scplot"></div></div>
+        </div>
+        <br>
+        <div class = "text-area">
+            <h2>Introduction of Dataset</h2>
+            <p>
+                &emsp;The dataset used for this visualization is the Daily Weather in the US., 2017, which provides
+                weather measurements collected by the NOAA Daily Global Historical Climatology Network.
+                With the increased amount of snow we have been seeing this semester, we thought that looking at how certain variables affect snow depth could be very informative.
+                To this end the dataset was then refined using Pandas to consolidate data to average weekly temperature and snow depth for states
+                along the East Coast with week 1 refering to the first week of January up until the 20th week in the year as there is no longer snowfall then. 
+            </p><br>
+            <h2>Design Decisions</h2>
+            <ul>
+                <li>Category 1:
+                    <ul>
+                    <li>Brushing and linking</li>
+                    </ul>
+                </li>
+                <li>Category 2:
+                    <ul>
+                    <li>Details-on-demand (tooltips)</li>
+                </ul>
+                </li>
+            </ul>
+            <p>
+                &emsp; A heatmap was utilized for the visualization in the left as it allows magnitude to be identified between two discrete variables in this case being the week of the year and the state.
+                The magnitude of snow depth can then be expressed by color with greater snow depth being expressed by a darker shade of blue. Hovering over any cell reveals the precise snow depth and metadata for that specific state and week.
+                A key functional requirement was the ability to correlate the heatmap data with the secondary graph on the right. We implemented brushing and linking to allow users to dynamically filter the dataset. By selecting a specific range on the heatmap, the right-hand graph updates in real-time to reflect that subset
+                One of the other options that was considered was grouped bar chart, however this graph could looked cluttered with the amount of categories present and makes filtering the data utilizing brushing to be visually confusing for the user.
+                A scatterplot was used for the visualization on the right as it allows for the relationship between two continuous numerical variables to be expressed.
+                This allows for trends to be shown between the temperature and snow depth. 
+            </p>
+            <br>
+            <h2>Development Process</h2>
+            <p>
+                &emsp; We began by collaborating to select our dataset and determine the most effective visualization approach. 
+                Once the foundation was set, we divided the remaining responsibilities: Seth developed the core visualization, while Alex authored the project write-up, recorded the demo video, and polished the final webpage.
+                Around a total of 20 hours was spent on developing the application. The aspect that took the greatest amount of time was developing the visualization and making sure it was an effective display of our data.
+            </p>
         </div>
     </div>
     <!-- tooltips -->
