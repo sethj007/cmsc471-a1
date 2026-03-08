@@ -186,4 +186,11 @@ ul,ol{
     padding-left: 2rem;
     margin-bottom: 1rem;
 }
-
+.chart-caption {
+    margin-top: 8px;
+     font-size: 0.78rem;
+    color: #666;
+    text-align: center;
+    font-style: italic;
+    line-height: 1.4;
+}
