@@ -350,11 +350,13 @@ function brushed(event) {
 
     svg.selectAll('.cell')
         .style('stroke', d => {
+            if (d.state === selectedState && selectedState !== 'all' && weeks.includes(d.week)) return '#f0a500';
             if (d.state === selectedState && selectedState !== 'all') return '#f0a500';
             if (weeks.includes(d.week)) return '#1a1a2e';
             return 'none';
         })
         .style('stroke-width', d => {
+            if (d.state === selectedState && selectedState !== 'all' && weeks.includes(d.week)) return '1.75px';
             if (d.state === selectedState && selectedState !== 'all') return '0.75px';
             if (weeks.includes(d.week)) return '0.5px';
             return '0';
